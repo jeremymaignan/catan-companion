@@ -70,34 +70,48 @@ class OpenAIClient:
                     delay = RETRY_DELAY * (2 ** (attempt - 1))
                     logger.warning(
                         "OpenAI API call failed (attempt %d/%d): %s — retrying in %ds",
-                        attempt, MAX_RETRIES, exc, delay,
+                        attempt,
+                        MAX_RETRIES,
+                        exc,
+                        delay,
                     )
                     time.sleep(delay)
 
-        raise RuntimeError(f"OpenAI API failed after {MAX_RETRIES} attempts: {last_error}")
+        raise RuntimeError(
+            f"OpenAI API failed after {MAX_RETRIES} attempts: {last_error}"
+        )
 
     def parse_tile(self, image_path):
         """Parse a single tile image and return (resource_code, value)."""
         with open(image_path, "rb") as f:
             base64_image = base64.b64encode(f.read()).decode("utf-8")
 
-        raw = self._call_api([{
-            "role": "user",
-            "content": [
-                {"type": "text", "text": PROMPT},
+        raw = self._call_api(
+            [
                 {
-                    "type": "image_url",
-                    "image_url": {
-                        "url": f"data:image/jpeg;base64,{base64_image}"
-                    },
-                },
-            ],
-        }])
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": PROMPT},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{base64_image}"
+                            },
+                        },
+                    ],
+                }
+            ]
+        )
 
         try:
             data = _extract_json(raw)
         except (json.JSONDecodeError, ValueError) as exc:
-            logger.error("Failed to parse OpenAI response for %s: %s\nRaw: %s", image_path, exc, raw[:300])
+            logger.error(
+                "Failed to parse OpenAI response for %s: %s\nRaw: %s",
+                image_path,
+                exc,
+                raw[:300],
+            )
             raise ValueError(f"Could not parse tile response: {exc}") from exc
 
         color = data.get("color", "beige")

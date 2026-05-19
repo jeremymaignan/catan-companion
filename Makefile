@@ -1,9 +1,20 @@
-.PHONY: lint clean
+.PHONY: lint clean build up down restart
 
 lint:
-	black . services/*
-	isort . services/*
-	# mypy . services/
+	black api/
+	isort api/
 
 clean:
-	find . | grep -E "(/__pycache__)" | xargs rm -rf
+	find . -type d -name __pycache__ -not -path "*/node_modules/*" -exec rm -rf {} +
+
+build:
+	docker compose build
+
+up:
+	docker compose up -d
+
+down:
+	docker compose down
+
+restart:
+	docker compose down && docker compose up -d

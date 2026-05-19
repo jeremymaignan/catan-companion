@@ -8,13 +8,9 @@ from pymongo.errors import PyMongoError
 
 from api.config import DICE_PROBABILITY, PORT_TYPES, SETTLEMENTS_POSITIONS
 from api.models.game import new_game
-from api.services.game_logic import (
-    add_settlement,
-    get_board_state,
-    remove_settlement,
-    upgrade_settlement,
-    validate_settlement,
-)
+from api.services.game_logic import (add_settlement, get_board_state,
+                                     remove_settlement, upgrade_settlement,
+                                     validate_settlement)
 from api.services.image_processing import crop_image
 from api.services.openai_client import OpenAIClient
 
@@ -29,11 +25,13 @@ def get_db():
 
 # ── Decorator to load a game by ID ──────────────────────────────────
 
+
 def require_game(fn):
     """Inject the `game` document as the first arg after `game_id`.
 
     Handles invalid ObjectId, DB errors, and missing games in one place.
     """
+
     @wraps(fn)
     def wrapper(game_id, *args, **kwargs):
         try:
@@ -51,10 +49,12 @@ def require_game(fn):
             return jsonify({"error": "Game not found"}), 404
 
         return fn(game_id, game, *args, **kwargs)
+
     return wrapper
 
 
 # ── Routes ───────────────────────────────────────────────────────────
+
 
 @games_bp.route("/api/games", methods=["POST"])
 def create_game():
@@ -88,11 +88,17 @@ def create_game():
             return jsonify({"error": "Ports must be a list"}), 400
         for p in ports:
             if not isinstance(p, dict) or "type" not in p or "positions" not in p:
-                return jsonify({"error": "Each port must have 'type' and 'positions'"}), 400
+                return (
+                    jsonify({"error": "Each port must have 'type' and 'positions'"}),
+                    400,
+                )
             if p["type"] not in PORT_TYPES:
                 return jsonify({"error": f"Invalid port type: {p['type']}"}), 400
             if not isinstance(p["positions"], list) or len(p["positions"]) != 2:
-                return jsonify({"error": "Each port must have exactly 2 positions"}), 400
+                return (
+                    jsonify({"error": "Each port must have exactly 2 positions"}),
+                    400,
+                )
 
     game = new_game(resources, [str(v) for v in values], ports=ports)
 
@@ -102,10 +108,15 @@ def create_game():
         logger.error("DB error creating game: %s", exc)
         return jsonify({"error": "Failed to save game"}), 500
 
-    return jsonify({
-        "id": str(result.inserted_id),
-        "message": "Game created successfully",
-    }), 201
+    return (
+        jsonify(
+            {
+                "id": str(result.inserted_id),
+                "message": "Game created successfully",
+            }
+        ),
+        201,
+    )
 
 
 @games_bp.route("/api/games/parse", methods=["POST"])
@@ -135,12 +146,17 @@ def create_game_from_image():
         logger.error("DB error creating game from image: %s", exc)
         return jsonify({"error": "Failed to save game"}), 500
 
-    return jsonify({
-        "id": str(result.inserted_id),
-        "resources": resources,
-        "values": values,
-        "message": "Game created from image",
-    }), 201
+    return (
+        jsonify(
+            {
+                "id": str(result.inserted_id),
+                "resources": resources,
+                "values": values,
+                "message": "Game created from image",
+            }
+        ),
+        201,
+    )
 
 
 @games_bp.route("/api/games/<game_id>", methods=["GET"])
@@ -241,7 +257,9 @@ def clone_game(game_id, game):
         cloned_ports = [dict(p) for p in raw_ports]
     else:
         cloned_ports = list(raw_ports) if raw_ports else None
-    clone = new_game(list(game["resources"]), list(game["values"]), ports=cloned_ports or None)
+    clone = new_game(
+        list(game["resources"]), list(game["values"]), ports=cloned_ports or None
+    )
 
     try:
         result = get_db().games.insert_one(clone)
@@ -249,10 +267,15 @@ def clone_game(game_id, game):
         logger.error("DB error cloning game: %s", exc)
         return jsonify({"error": "Failed to clone game"}), 500
 
-    return jsonify({
-        "id": str(result.inserted_id),
-        "message": "Game cloned successfully",
-    }), 201
+    return (
+        jsonify(
+            {
+                "id": str(result.inserted_id),
+                "message": "Game cloned successfully",
+            }
+        ),
+        201,
+    )
 
 
 @games_bp.route("/api/probabilities", methods=["GET"])

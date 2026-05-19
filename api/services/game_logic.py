@@ -1,19 +1,13 @@
-from api.config import (
-    ADJACENT_SETTLEMENT_POSITIONS,
-    DEFAULT_PORTS,
-    DICE_PROBABILITY,
-    INDEXES,
-    PORT_EDGES,
-    PORT_TYPES,
-    RESOURCES_MAP,
-    SETTLEMENTS_POSITIONS,
-)
+from api.config import (ADJACENT_SETTLEMENT_POSITIONS, DEFAULT_PORTS,
+                        DICE_PROBABILITY, INDEXES, PORT_EDGES, PORT_TYPES,
+                        RESOURCES_MAP, SETTLEMENTS_POSITIONS)
 
 DICE_DENOMINATOR = 36
 TILE_COUNT = 19
 
 
 # ── Settlement operations ────────────────────────────────────────────
+
 
 def validate_settlement(position, settlements, blocked_positions):
     """
@@ -68,6 +62,7 @@ def remove_settlement(position, settlements, blocked_positions):
 
 # ── Statistics calculation (broken into focused helpers) ─────────────
 
+
 def _get_dice_info(value):
     """Return dice probability info for a given value, with safe defaults."""
     return DICE_PROBABILITY.get(value, {"proba": 0, "rate": 0})
@@ -78,9 +73,9 @@ def _collect_production(resources, values, settlements, robber_tile):
     Walk all settlements and their adjacent tiles to collect production data.
     Returns (active_dice, blocked_dice, active_resource, blocked_resource).
     """
-    active_dice = {}    # {value: [resource_entry, ...]}
+    active_dice = {}  # {value: [resource_entry, ...]}
     blocked_dice = {}
-    active_res = {}     # {code: {text, color, rate, proba, values, ...}}
+    active_res = {}  # {code: {text, color, rate, proba, values, ...}}
     blocked_res = {}
 
     for position, stype in settlements.items():
@@ -106,8 +101,12 @@ def _collect_production(resources, values, settlements, robber_tile):
             }
 
             if is_blocked:
-                _add_dice_entry(blocked_dice, value, {**entry, "blocked": True}, multiplier)
-                _add_resource_entry(blocked_res, resource_code, resource_info, value, blocked=True)
+                _add_dice_entry(
+                    blocked_dice, value, {**entry, "blocked": True}, multiplier
+                )
+                _add_resource_entry(
+                    blocked_res, resource_code, resource_info, value, blocked=True
+                )
             else:
                 _add_dice_entry(active_dice, value, entry, multiplier)
                 _add_resource_entry(active_res, resource_code, resource_info, value)
@@ -169,12 +168,12 @@ def _merge_and_sort_resources(active_res, blocked_res):
     A resource is 'fully blocked' only if it has no active production at all.
     """
     fully_blocked = {
-        code: info
-        for code, info in blocked_res.items()
-        if code not in active_res
+        code: info for code, info in blocked_res.items() if code not in active_res
     }
     sorted_active = sorted(active_res.items(), key=lambda x: x[1]["rate"], reverse=True)
-    sorted_blocked = sorted(fully_blocked.items(), key=lambda x: x[1]["rate"], reverse=True)
+    sorted_blocked = sorted(
+        fully_blocked.items(), key=lambda x: x[1]["rate"], reverse=True
+    )
     return dict(sorted_active + sorted_blocked)
 
 
@@ -211,6 +210,7 @@ def calculate_statistics(resources, values, settlements, robber_tile=None):
 
 # ── Board state builder (broken into focused helpers) ────────────────
 
+
 def _build_tiles(resources, values, robber_tile):
     """Build the 19-tile data list for the frontend."""
     tiles = []
@@ -219,17 +219,19 @@ def _build_tiles(resources, values, robber_tile):
         resource_info = RESOURCES_MAP.get(resource_code, {})
         value = int(values[i])
         dp = _get_dice_info(value)
-        tiles.append({
-            "index": i + 1,
-            "resource": resource_code,
-            "text": resource_info.get("text", ""),
-            "color": resource_info.get("color", "#ccc"),
-            "board_color": resource_info.get("board_color", "#ccc"),
-            "value": value,
-            "dice_probability": dp.get("proba", 0),
-            "dice_dots": dp.get("rate", 0),
-            "has_robber": (i + 1) == robber_tile,
-        })
+        tiles.append(
+            {
+                "index": i + 1,
+                "resource": resource_code,
+                "text": resource_info.get("text", ""),
+                "color": resource_info.get("color", "#ccc"),
+                "board_color": resource_info.get("board_color", "#ccc"),
+                "value": value,
+                "dice_probability": dp.get("proba", 0),
+                "dice_dots": dp.get("rate", 0),
+                "has_robber": (i + 1) == robber_tile,
+            }
+        )
     return tiles
 
 
@@ -268,15 +270,17 @@ def _build_tile_details(pos, resources, values, robber_tile):
         resource_code = resources[tile_idx - 1]
         resource_info = RESOURCES_MAP.get(resource_code, {})
         dp = _get_dice_info(value)
-        details.append({
-            "tile_index": tile_idx,
-            "resource": resource_code,
-            "text": resource_info.get("text", ""),
-            "color": resource_info.get("color", "#ccc"),
-            "value": value,
-            "rate": dp["rate"],
-            "has_robber": robber_tile is not None and tile_idx == robber_tile,
-        })
+        details.append(
+            {
+                "tile_index": tile_idx,
+                "resource": resource_code,
+                "text": resource_info.get("text", ""),
+                "color": resource_info.get("color", "#ccc"),
+                "value": value,
+                "rate": dp["rate"],
+                "has_robber": robber_tile is not None and tile_idx == robber_tile,
+            }
+        )
     return details
 
 
@@ -285,10 +289,13 @@ def _build_positions(resources, values, settlements, blocked_positions, robber_t
     position_scores = _compute_position_scores(values)
 
     available_positions = {
-        pos for pos in SETTLEMENTS_POSITIONS
+        pos
+        for pos in SETTLEMENTS_POSITIONS
         if pos not in settlements and pos not in blocked_positions
     }
-    score_to_rank, total_ranks = _rank_available_positions(position_scores, available_positions)
+    score_to_rank, total_ranks = _rank_available_positions(
+        position_scores, available_positions
+    )
 
     positions = {}
     for pos in SETTLEMENTS_POSITIONS:
@@ -339,7 +346,9 @@ def _compute_board_scarcity(resources, values):
         scarcity[code]["total_rate"] = total_rate
         scarcity[code]["dice_values"] = sorted(scarcity[code]["dice_values"])
 
-    return dict(sorted(scarcity.items(), key=lambda x: x[1]["total_rate"], reverse=True))
+    return dict(
+        sorted(scarcity.items(), key=lambda x: x[1]["total_rate"], reverse=True)
+    )
 
 
 def _build_ports(game):
@@ -352,26 +361,30 @@ def _build_ports(game):
         for i, (pos_a, pos_b) in enumerate(PORT_EDGES):
             port_code = raw_ports[i] if i < len(raw_ports) else "none"
             port_info = PORT_TYPES.get(port_code, PORT_TYPES["none"])
-            ports.append({
-                "index": i,
-                "type": port_code,
-                "text": port_info["text"],
-                "color": port_info.get("color"),
-                "positions": [pos_a, pos_b],
-            })
+            ports.append(
+                {
+                    "index": i,
+                    "type": port_code,
+                    "text": port_info["text"],
+                    "color": port_info.get("color"),
+                    "positions": [pos_a, pos_b],
+                }
+            )
     else:
         # New format: list of {type, positions} dicts
         for i, port_data in enumerate(raw_ports):
             port_code = port_data.get("type", "none")
             port_positions = port_data.get("positions", [])
             port_info = PORT_TYPES.get(port_code, PORT_TYPES["none"])
-            ports.append({
-                "index": i,
-                "type": port_code,
-                "text": port_info["text"],
-                "color": port_info.get("color"),
-                "positions": port_positions,
-            })
+            ports.append(
+                {
+                    "index": i,
+                    "type": port_code,
+                    "text": port_info["text"],
+                    "color": port_info.get("color"),
+                    "positions": port_positions,
+                }
+            )
 
     return ports
 
@@ -395,7 +408,9 @@ def get_board_state(game):
 
     return {
         "tiles": _build_tiles(resources, values, robber_tile),
-        "positions": _build_positions(resources, values, settlements, blocked_positions, robber_tile),
+        "positions": _build_positions(
+            resources, values, settlements, blocked_positions, robber_tile
+        ),
         "settlements": settlements,
         "blocked_positions": blocked_positions,
         "robber_tile": robber_tile,

@@ -1,18 +1,31 @@
 # Catan Companion
 
-A web-based companion app for **The Settlers of Catan** that helps you make better strategic decisions with real-time probability calculations, resource analysis, trading insights, and smart recommendations.
+A web-based companion app for **The Settlers of Catan** that gives you a strategic edge during your games. Set up your board, place your settlements, and get real-time probability analysis, resource insights, and actionable recommendations to make smarter decisions at every turn.
+
+## What It Does
+
+Catan Companion acts as an analytical assistant that sits alongside your physical board game. You replicate your board layout in the app, then track your settlements as the game progresses. In return, it calculates dice probabilities, identifies resource weaknesses, suggests optimal moves, and helps you understand the true value of every position on the board.
+
+## How to Use It
+
+1. **Set up your board** - Reproduce your physical Catan board by assigning resources and dice values to each of the 19 tiles, then configure the coastal ports. The app validates your setup against official Catan distribution rules.
+2. **Place your settlements** - Click vertex positions on the interactive board to place colonies, upgrade to cities, or mark opponent settlements.
+3. **Read your analytics** - As you build, the sidebar updates with production probabilities, trading rates, resource scarcity, and victory point tracking.
+4. **Follow the tips** - The app generates strategic recommendations: which resources you're missing, where to place the robber, which colony to upgrade next, and which ports to target.
+5. **Share your board** - Send a link to other players so they can analyze the same board layout independently.
 
 ## Features
 
 - **Interactive hex board** - Click to place colonies, cities, and mark opponents
-- **Real-time statistics** - Resource probabilities updated as you place settlements
-- **Smart tips** - Warns about missing resources, weak production, port synergies, and optimal robber placement
-- **Trading rates** - See your effective trading rates based on port access
-- **Resource scarcity** - Board-wide resource availability overview
-- **Robber tracking** - Place the robber to see its impact on your production
+- **Production statistics** - Per-resource and per-dice-value probability breakdowns, with visual production bars
+- **Smart tips** - Warns about missing resources, weak production, port synergies, optimal robber placement, and best city upgrade targets
+- **Trading rates** - See your effective trading ratio for each resource based on port access (2:1, 3:1, or 4:1)
+- **Resource scarcity** - Board-wide resource availability showing which resources are rare and valuable
+- **Victory point tracker** - Colony/city counts with toggles for Longest Road and Largest Army bonuses
+- **Robber tracking** - Place the robber to see its impact on your production and get opponent-blocking recommendations
 - **Game sharing** - Clone and share your board setup via URL
 - **Dark mode** - Toggle between light and dark themes
-- **Manual or image setup** - Configure the board manually or upload a screenshot (OpenAI Vision)
+- **Manual or image setup** - Configure the board manually or upload a screenshot
 
 ## Tech Stack
 
@@ -20,7 +33,7 @@ A web-based companion app for **The Settlers of Catan** that helps you make bett
 |-----------|------------|
 | Frontend | React 18, Nginx |
 | Backend | Flask (Python 3.11), Gunicorn |
-| Database | MongoDB 7 |
+| Database | MongoDB 8.0 |
 | Deployment | Docker Compose |
 
 ## Getting Started
@@ -41,59 +54,9 @@ The app will be available at **http://localhost:3000**.
 
 | Variable | Service | Description |
 |----------|---------|-------------|
-| `OPENAI_API_KEY` | api | OpenAI API key for board image parsing (optional) |
 | `MONGO_URI` | api | MongoDB connection string (default: `mongodb://mongo:27017`) |
 | `MONGO_DB` | api | Database name (default: `catan`) |
 | `REACT_APP_API_URL` | frontend | API base URL (default: empty, uses nginx proxy) |
-
-To enable image parsing, create a `.env` file at the project root:
-
-```sh
-OPENAI_API_KEY=sk-your-key-here
-```
-
-## Project Structure
-
-```
-catan-companion/
-├── docker-compose.yml
-├── api/
-│   ├── Dockerfile
-│   ├── requirements.txt
-│   ├── app.py                  # Flask app factory
-│   ├── config.py               # Environment config
-│   ├── models/
-│   │   └── game.py             # Game data model
-│   ├── routes/
-│   │   └── games.py            # API endpoints
-│   └── services/
-│       ├── game_logic.py       # Board logic & probability calculations
-│       ├── openai_client.py    # OpenAI Vision integration
-│       └── image_processing.py # Board image parsing
-└── frontend/
-    ├── Dockerfile
-    ├── nginx.conf              # Nginx reverse proxy config
-    ├── package.json
-    └── src/
-        ├── App.js              # Main app with routing & state
-        ├── api.js              # API client
-        ├── responsive.css      # Theme variables & responsive layout
-        ├── components/
-        │   ├── HexBoard.js         # Interactive SVG game board
-        │   ├── SetupForm.js        # Board configuration wizard
-        │   ├── SetupBoardPreview.js # Setup step 2 board preview
-        │   ├── StatsPanel.js       # Resource probability tables
-        │   ├── TipsCard.js         # Strategic recommendations
-        │   ├── TradingCard.js      # Port trading rates
-        │   ├── ScarcityCard.js     # Board resource availability
-        │   ├── SettlementsCard.js   # Colony/city/points counter
-        │   ├── BoardLegend.js      # Interactive board legend
-        │   └── CollapsibleCard.js  # Reusable card wrapper
-        └── shared/
-            ├── boardGeometry.js # Hex grid math & layout
-            ├── constants.js     # Resources, ports, colors
-            └── ThemeContext.js   # Dark/light theme provider
-```
 
 ## API Endpoints
 
@@ -126,7 +89,7 @@ docker compose up -d mongo
 # Run the API locally
 cd api
 pip install -r requirements.txt
-MONGO_URI=mongodb://localhost:27017 MONGO_DB=catan flask --app api.app:create_app run --port 5001
+MONGO_URI=mongodb://localhost:27017 MONGO_DB=catan flask --app app:create_app run --port 5001
 
 # Run the frontend locally
 cd frontend
@@ -134,8 +97,13 @@ npm install
 npm start
 ```
 
-### Lint
+### Makefile
 
 ```sh
-make lint
+make build     # Build all Docker images
+make up        # Start all services
+make down      # Stop all services
+make restart   # Stop and restart all services
+make lint      # Run black + isort on the API code
+make clean     # Remove __pycache__ directories
 ```
