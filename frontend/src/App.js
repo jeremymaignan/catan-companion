@@ -173,7 +173,7 @@ function AppContent() {
       <header style={styles.header}>
         <div className="header-inner" style={styles.headerInner}>
           <div style={styles.headerBrand}>
-            <svg width="28" height="28" viewBox="0 0 24 24" style={styles.headerIcon} aria-hidden="true">
+            <svg width="32" height="32" viewBox="0 0 24 24" style={styles.headerIcon} aria-hidden="true">
               <polygon
                 points="12,2 21,7 21,17 12,22 3,17 3,7"
                 fill="#d4a373"
