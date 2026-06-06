@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { RANK_COLORS } from '../shared/constants';
 
 const ITEMS = [
   {
     label: 'Available',
-    desc: 'Click to place colony',
     render: () => (
       <svg width="24" height="24" viewBox="0 0 24 24">
         <circle cx="12" cy="12" r="10" fill={RANK_COLORS.good.fill} stroke={RANK_COLORS.good.stroke} strokeWidth="1.5" />
@@ -14,7 +13,6 @@ const ITEMS = [
   },
   {
     label: 'Colony',
-    desc: 'Click to upgrade to city',
     render: () => (
       <svg width="24" height="24" viewBox="0 0 24 24">
         <rect x="2" y="2" width="20" height="20" rx="4" fill="#7b1fa2" stroke="#6a1b9a" strokeWidth="1.5" />
@@ -24,7 +22,6 @@ const ITEMS = [
   },
   {
     label: 'City',
-    desc: 'Click to mark as opponent',
     render: () => (
       <svg width="24" height="24" viewBox="0 0 24 24">
         <rect x="2" y="2" width="20" height="20" rx="4" fill="#1565c0" stroke="#0d47a1" strokeWidth="1.5" />
@@ -34,7 +31,6 @@ const ITEMS = [
   },
   {
     label: 'Opponent',
-    desc: 'Click to remove',
     render: () => (
       <svg width="24" height="24" viewBox="0 0 24 24">
         <rect x="2" y="2" width="20" height="20" rx="4" fill="#212121" stroke="#000" strokeWidth="1.5" />
@@ -44,10 +40,8 @@ const ITEMS = [
   },
   {
     label: 'Robber',
-    desc: 'Click any tile to place',
     render: () => (
       <svg width="24" height="24" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="10" fill="#e0e0e0" stroke="#1a1a1a" strokeWidth="1.5" />
         <circle cx="12" cy="12" r="10" fill="none" stroke="#1a1a1a" strokeWidth="2" />
         <line x1="5" y1="19" x2="19" y2="5" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round" />
       </svg>
@@ -57,7 +51,30 @@ const ITEMS = [
 
 export default function BoardLegend() {
   const [expanded, setExpanded] = useState(false);
+  const [pos, setPos] = useState({ left: 0, bottom: 0 });
   const wrapperRef = useRef(null);
+
+  // Center the popover on the toolbar (aligned with the board column),
+  // anchored just above it — rather than centered on the legend button.
+  useLayoutEffect(() => {
+    if (!expanded) return;
+    const reposition = () => {
+      if (!wrapperRef.current) return;
+      const toolbar = wrapperRef.current.parentElement;
+      const rect = (toolbar || wrapperRef.current).getBoundingClientRect();
+      setPos({
+        left: rect.left + rect.width / 2,
+        bottom: window.innerHeight - rect.top + 10,
+      });
+    };
+    reposition();
+    window.addEventListener('resize', reposition);
+    window.addEventListener('scroll', reposition, true);
+    return () => {
+      window.removeEventListener('resize', reposition);
+      window.removeEventListener('scroll', reposition, true);
+    };
+  }, [expanded]);
 
   // Close on click outside
   useEffect(() => {
@@ -86,7 +103,7 @@ export default function BoardLegend() {
       </button>
 
       {expanded && (
-        <div style={styles.popover}>
+        <div style={{ ...styles.popover, left: pos.left, bottom: pos.bottom }}>
           <button
             style={styles.closeBtn}
             onClick={() => setExpanded(false)}
@@ -100,7 +117,6 @@ export default function BoardLegend() {
                 <div style={styles.icon}>{item.render()}</div>
                 <div>
                   <div style={styles.label}>{item.label}</div>
-                  <div style={styles.desc}>{item.desc}</div>
                 </div>
               </div>
             ))}
@@ -112,7 +128,7 @@ export default function BoardLegend() {
             <span style={styles.rankLabel}>Medium</span>
             <span style={styles.rankDot(RANK_COLORS.poor.fill)} />
             <span style={styles.rankLabel}>Worst</span>
-            <span style={styles.rankSuffix}> &mdash; position rank by production value</span>
+            <span style={styles.rankSuffix}> Position rank by production value</span>
           </div>
         </div>
       )}
@@ -139,17 +155,15 @@ const styles = {
     padding: 0,
   },
   popover: {
-    position: 'absolute',
-    bottom: '100%',
+    position: 'fixed',
     left: '50%',
     transform: 'translateX(-50%)',
-    marginBottom: 10,
-    padding: '12px 16px',
+    padding: '28px 18px 14px',
     background: 'var(--card-bg)',
     borderRadius: 12,
     border: '1px solid var(--border-main)',
     boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-    width: 520,
+    width: 'max-content',
     maxWidth: '90vw',
     zIndex: 600,
   },
@@ -175,12 +189,11 @@ const styles = {
   item: {
     display: 'flex',
     alignItems: 'center',
-    gap: 8,
-    padding: '6px 10px',
+    gap: 6,
+    padding: '5px 10px',
     borderRadius: 8,
     background: 'var(--card-inner-bg)',
     border: '1px solid var(--border-subtle)',
-    minWidth: 150,
     flex: '0 0 auto',
   },
   icon: {
@@ -193,12 +206,6 @@ const styles = {
     fontSize: 12,
     fontWeight: 700,
     color: 'var(--text-primary)',
-    fontFamily: "'Inter', sans-serif",
-  },
-  desc: {
-    fontSize: 11,
-    color: 'var(--text-hint)',
-    fontWeight: 500,
     fontFamily: "'Inter', sans-serif",
   },
   rankHint: {

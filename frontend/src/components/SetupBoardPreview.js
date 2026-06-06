@@ -41,7 +41,7 @@ export default function SetupBoardPreview({ resources, values, ports, blockedEdg
             <polygon
               points={hexPoints(hex.x, hex.y)}
               fill={boardColor}
-              stroke="#5d4037"
+              stroke="#4a4a4a"
               strokeWidth="2"
               strokeLinejoin="round"
             />

@@ -39,7 +39,7 @@ ALL_RESOURCES.forEach(r => { RESOURCE_LABELS[r.code] = r.label; });
 
 export const PORT_COLORS = {
   'none':    { fill: '#e8e0d8', stroke: '#d7ccc8', text: '#bbb' },
-  '3:1':    { fill: '#fff',    stroke: '#6d4c41', text: '#4e342e' },
+  '3:1':    { fill: '#fff',    stroke: '#4a4a4a', text: '#4a4a4a' },
   'wo_port': { fill: '#1b5e20', stroke: '#1b5e20', text: '#fff' },
   'b_port':  { fill: '#a0522d', stroke: '#a0522d', text: '#fff' },
   'o_port':  { fill: '#9e9e9e', stroke: '#757575', text: '#fff' },

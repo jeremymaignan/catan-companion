@@ -22,11 +22,20 @@ export const styles = {
     justifyContent: 'space-between',
     height: 56,
   },
+  headerBrand: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+  },
+  headerIcon: {
+    flexShrink: 0,
+  },
   headerTitle: {
     margin: 0,
-    fontSize: 20,
+    fontFamily: "'Cinzel', serif",
+    fontSize: 22,
     fontWeight: 700,
-    letterSpacing: '0.3px',
+    letterSpacing: '0.5px',
   },
   headerActions: {
     display: 'flex',

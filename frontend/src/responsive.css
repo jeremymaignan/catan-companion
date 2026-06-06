@@ -7,27 +7,27 @@
 
 /* ── Theme variables ────────────────────────────────────── */
 :root {
-  --page-bg: #f5f1eb;
+  --page-bg: #f4f4f5;
   --card-bg: #ffffff;
-  --card-inner-bg: #faf8f5;
+  --card-inner-bg: #fafafa;
   --header-gradient: linear-gradient(135deg, #4e342e 0%, #6d4c41 100%);
   --btn-gradient: linear-gradient(135deg, #5d4037 0%, #795548 100%);
 
-  --text-primary: #4e342e;
-  --text-secondary: #6d4c41;
-  --text-body: #5d4037;
-  --text-muted: #8d6e63;
-  --text-hint: #a1887f;
+  --text-primary: #2a2a2a;
+  --text-secondary: #4a4a4a;
+  --text-body: #3a3a3a;
+  --text-muted: #757575;
+  --text-hint: #9e9e9e;
   --text-disabled: #bbb;
 
-  --border-main: #e8e0d8;
-  --border-subtle: #f0ebe5;
-  --border-divider: #ede7e0;
-  --border-light: #d7ccc8;
-  --border-table-row: #f8f5f0;
+  --border-main: #e2e2e2;
+  --border-subtle: #f0f0f0;
+  --border-divider: #ececec;
+  --border-light: #d4d4d4;
+  --border-table-row: #f6f6f6;
 
-  --table-header-bg: #faf8f5;
-  --table-header-text: #a1887f;
+  --table-header-bg: #fafafa;
+  --table-header-text: #9e9e9e;
 
   --shadow-card: 0 2px 8px rgba(0,0,0,0.04);
   --shadow-header: 0 2px 12px rgba(78, 52, 46, 0.3);
@@ -39,7 +39,7 @@
   --error-text: #b91c1c;
   --error-border: #fecaca;
 
-  --toggle-bg: #ede7e0;
+  --toggle-bg: #e8e8e8;
 
   --tip-danger-bg: #fef2f2;
   --tip-danger-border: #fecaca;
@@ -54,14 +54,14 @@
   --tip-info-border: #90caf9;
   --tip-info-text: #1565c0;
 
-  --rate-4-bg: #faf8f5;
-  --rate-4-border: #f0ebe5;
-  --rate-4-text: #a1887f;
-  --rate-4-tag-bg: #f0ebe5;
-  --rate-4-tag-text: #8d6e63;
+  --rate-4-bg: #fafafa;
+  --rate-4-border: #f0f0f0;
+  --rate-4-text: #9e9e9e;
+  --rate-4-tag-bg: #f0f0f0;
+  --rate-4-tag-text: #757575;
   --rate-3-bg: #fff8e1;
   --rate-3-border: #ffe082;
-  --rate-3-text: #6d4c41;
+  --rate-3-text: #5a5a5a;
   --rate-3-tag-bg: #ffe082;
   --rate-3-tag-text: #e65100;
   --rate-2-bg: #e8f5e9;
@@ -78,13 +78,13 @@
   --validation-err-text: #c62828;
   --validation-row-err-bg: #fef2f2;
 
-  --bar-bg: #f0ebe5;
+  --bar-bg: #f0f0f0;
 
   --svg-tooltip-bg: white;
-  --svg-tooltip-border: #d7ccc8;
-  --svg-disc-fill: #faf8f5;
-  --svg-hex-stroke: #5d4037;
-  --svg-number-text: #3e2723;
+  --svg-tooltip-border: #d4d4d4;
+  --svg-disc-fill: #fafafa;
+  --svg-hex-stroke: #4a4a4a;
+  --svg-number-text: #262626;
 }
 
 [data-theme="dark"] {

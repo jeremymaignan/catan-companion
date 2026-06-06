@@ -172,7 +172,25 @@ function AppContent() {
     <div style={styles.app}>
       <header style={styles.header}>
         <div className="header-inner" style={styles.headerInner}>
-          <h1 className="header-title" style={styles.headerTitle}>Catan Companion</h1>
+          <div style={styles.headerBrand}>
+            <svg width="28" height="28" viewBox="0 0 24 24" style={styles.headerIcon} aria-hidden="true">
+              <polygon
+                points="12,2 21,7 21,17 12,22 3,17 3,7"
+                fill="#d4a373"
+                stroke="#5d4037"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+              />
+              <polygon
+                points="12,7 16,9.5 16,14.5 12,17 8,14.5 8,9.5"
+                fill="#ffe082"
+                stroke="#5d4037"
+                strokeWidth="1.2"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <h1 className="header-title" style={styles.headerTitle}>Catan Companion</h1>
+          </div>
           <div className="header-actions" style={styles.headerActions}>
             {gameId && (
               <>
@@ -281,7 +299,7 @@ function AppContent() {
                 </CollapsibleCard>
               )}
               <div style={{ marginTop: 16 }}>
-                <CollapsibleCard title="Tips">
+                <CollapsibleCard title="Tips" defaultOpen={false}>
                   <TipsCard
                     statistics={boardState.statistics}
                     ports={boardState.ports}
@@ -293,7 +311,7 @@ function AppContent() {
                 </CollapsibleCard>
               </div>
               <div style={{ marginTop: 16 }}>
-                <CollapsibleCard title="Statistics">
+                <CollapsibleCard title="Statistics" defaultOpen={false}>
                   <StatsPanel
                     statistics={boardState.statistics}
                     settlements={boardState.settlements}
@@ -301,7 +319,7 @@ function AppContent() {
                 </CollapsibleCard>
               </div>
               <div style={{ marginTop: 16 }}>
-                <CollapsibleCard title="Trading Rates">
+                <CollapsibleCard title="Trading Rates" defaultOpen={false}>
                   <TradingCard
                     ports={boardState.ports}
                     settlements={boardState.settlements}
@@ -309,7 +327,7 @@ function AppContent() {
                 </CollapsibleCard>
               </div>
               <div style={{ marginTop: 16 }}>
-                <CollapsibleCard title="Resource Availability" defaultOpen={false}>
+                <CollapsibleCard title="Resource Availability" defaultOpen={true}>
                   <ScarcityCard
                     boardScarcity={boardState.board_scarcity}
                   />

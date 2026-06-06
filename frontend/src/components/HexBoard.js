@@ -87,7 +87,7 @@ export default function HexBoard({ tiles, positions, ports, onPositionClick, onT
             <polygon
               points={hexPoints(hex.x, hex.y)}
               fill={hex.tile.board_color}
-              stroke={hasRobber ? '#1a1a1a' : '#5d4037'}
+              stroke={hasRobber ? '#1a1a1a' : '#4a4a4a'}
               strokeWidth="2.5"
               strokeLinejoin="round"
             />
@@ -116,14 +116,14 @@ export default function HexBoard({ tiles, positions, ports, onPositionClick, onT
               </text>
               {hex.tile.value > 0 && (
                 <>
-                  <circle cx={hex.x} cy={hex.y + 18} r="22" fill={hasRobber ? '#e0e0e0' : '#faf8f5'} stroke={hasRobber ? '#1a1a1a' : isHot ? '#c62828' : '#5d4037'} strokeWidth={hasRobber ? 2 : isHot ? 2 : 1.5} />
+                  <circle cx={hex.x} cy={hex.y + 18} r="22" fill={hasRobber ? '#e0e0e0' : '#faf8f5'} stroke={hasRobber ? '#1a1a1a' : isHot ? '#c62828' : '#5d4037'} strokeWidth={hasRobber ? 2 : 1.5} />
                   <text
                     x={hex.x}
                     y={hex.y + 18}
                     textAnchor="middle"
                     dominantBaseline="central"
                     fontSize="20"
-                    fontWeight={isHot ? '800' : '600'}
+                    fontWeight="600"
                     fontFamily="'Inter', sans-serif"
                     fill={hasRobber ? '#1a1a1a' : isHot ? '#c62828' : '#3e2723'}
                   >
